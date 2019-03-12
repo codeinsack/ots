@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task-1</title>
+  <style>
+    .red {
+      color: red
+    }
+  </style>
+</head>
+<body>
+<input type="text" name="name" class="js_name" value="Xxxx">
+</body>
+<script>
+  var input = document.querySelector('.js_name');
+  var startValue = input.value;
+  input.addEventListener('input', function(event) {
+    if (event.target.value !== startValue) {
+      input.classList.add('red');
+    } else {
+      input.classList.remove('red');
+    }
+  });
+</script>
+</html>

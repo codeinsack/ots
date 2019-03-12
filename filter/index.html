@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task-2</title>
+  <style>
+  </style>
+</head>
+<body>
+<form>
+  <label>
+    S
+    <input class="size" name="size" type="radio" value="S">
+  </label>
+  <label>
+    M
+    <input class="size" name="size" type="radio" value="M">
+  </label>
+  <label>
+    L
+    <input class="size" name="size" type="radio" value="L">
+  </label>
+  <br>
+  <hr>
+  <label>
+    1
+    <input class="color" type="checkbox" value="1">
+  </label>
+  <label>
+    2
+    <input class="color" type="checkbox" value="2">
+  </label>
+  <label>
+    3
+    <input class="color" type="checkbox" value="3">
+  </label>
+  <label>
+    4
+    <input class="color" type="checkbox" value="4">
+  </label>
+  <label>
+    5
+    <input class="color" type="checkbox" value="5">
+  </label>
+  <br>
+  <hr>
+  <select style="width: 100px;" multiple>
+    <option class="manufacturer" value="aaa">aaa</option>
+    <option class="manufacturer" value="b&c">b&c</option>
+    <option class="manufacturer" value="ddd">ddd</option>
+    <option class="manufacturer" value="eee">eee</option>
+  </select>
+  <br>
+  <hr>
+  <label>
+    sale
+    <input class="sale" type="checkbox" value="1">
+  </label>
+</form>
+</body>
+<script>
+  var params = parseUrlToObject();
+  var elements = getLinksToElementsObject(params);
+  initInputElements(params, elements);
+
+  document.querySelector('form').addEventListener('click', function(event) {
+    if (event.target.className === 'sale') return;
+
+    var checkedElements = getCheckedElementsObject(elements);
+    var valuesForInsertToUrl = getValuesOfElementsObject(checkedElements);
+    var newUrl = getUpdatedUrl(valuesForInsertToUrl);
+    console.log(newUrl);
+  });
+
+  function parseUrlToObject() {
+    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+      url = window.location.href,
+      params = {},
+      match;
+    while(match = regex.exec(url)) {
+      params[match[1]] = match[2];
+    }
+    return params;
+  }
+
+  function getElementsArray(className) {
+    var nodeElems = document.getElementsByClassName(className);
+    return Array.prototype.slice.call(nodeElems);
+  }
+
+  function getLinksToElementsObject(params) {
+    var elements = {};
+    Object.keys(params).forEach(function(param) {
+      elements[param] = getElementsArray(param);
+    });
+    return elements;
+  }
+
+  function initInputElements(params, elements) {
+    Object.keys(elements).forEach(function(key) {
+      elements[key].forEach(function(element) {
+        if (params[key].indexOf(encodeURIComponent(element.value)) !== -1) {
+          element.checked === undefined ? element.selected = true : element.checked = true;
+        }
+      });
+    });
+  }
+
+  function getCheckedElementsObject(elements) {
+    var checkedElems = {};
+    Object.keys(elements).forEach(function(key) {
+      elements[key].forEach(function(element) {
+        if (element.checked === true || element.selected === true) {
+          if (!checkedElems[key]) {
+            checkedElems[key] = [];
+          }
+          checkedElems[key].push(element);
+        }
+      });
+    });
+    return checkedElems;
+  }
+
+  function getValuesOfElementsObject(checkedObj) {
+    var resultObj = {};
+    Object.keys(checkedObj).forEach(function(key) {
+      checkedObj[key].forEach(function(element) {
+        if (!resultObj[key]) {
+          resultObj[key] = [];
+        }
+        resultObj[key].push(element.value);
+      });
+    });
+    return resultObj;
+  }
+
+  function getUpdatedUrl(obj) {
+    var url = document.location.href;
+    var params = '?';
+
+    Object.keys(obj).forEach(function(key) {
+      var decodedValues = obj[key].map(function(el) {
+        return encodeURIComponent(el);
+      });
+      params += key + '=' + decodedValues.join(',') + '&';
+    });
+    return url.replace(/\?.*$/, params.slice(0, -1));
+  }
+
+</script>
+</html>
